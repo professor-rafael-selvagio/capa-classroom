@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capa Google Classroom - SENAI Excel Básico com IA Generativa</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0b1120;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 16px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .header-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      background: #1e293b;
+      padding: 18px 24px;
+      border-radius: 16px;
+      border: 1px solid #334155;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .header-title h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #107c41, #16a34a);
+      color: white;
+      border: none;
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(16, 124, 65, 0.35);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 124, 65, 0.5);
+    }
+
+    .btn.btn-outline {
+      background: #334155;
+      color: #e2e8f0;
+      box-shadow: none;
+      border: 1px solid #475569;
+    }
+
+    .btn.btn-outline:hover {
+      background: #475569;
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    /* Classroom Banner Preview */
+    .banner-preview-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .banner-canvas {
+      width: 100%;
+      min-height: 275px;
+      background: linear-gradient(125deg, #092014 0%, #107c41 45%, #054020 70%, #03140a 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 42px;
+      transition: background 0.25s ease;
+    }
+
+    /* Decorative Background Shapes & Grid */
+    .banner-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .ai-glow-1 {
+      position: absolute;
+      width: 380px;
+      height: 380px;
+      right: -60px;
+      top: -120px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, rgba(139, 92, 246, 0.25) 50%, transparent 70%);
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    .ai-glow-2 {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      left: 28%;
+      bottom: -110px;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.35) 0%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+    }
+
+    /* Banner Content Styling */
+    .banner-content {
+      position: relative;
+      z-index: 2;
+      max-width: 63%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .badge-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 2px;
+    }
+
+    .senai-tag {
+      background: #e30613;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      padding: 3px 12px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 8px rgba(227, 6, 19, 0.4);
+    }
+
+    .course-type {
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(10px);
+      color: #f1f5f9;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .course-title {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1.12;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+      margin: 2px 0 4px 0;
+    }
+
+    .course-title span {
+      background: linear-gradient(135deg, #38bdf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .course-details {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13px;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .course-details div {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Linha do Professor - Logo abaixo da Carga Horária */
+    .instructor-box {
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #f8fafc;
+      background: rgba(15, 23, 42, 0.55);
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(8px);
+      width: fit-content;
+    }
+
+    .instructor-box i {
+      color: #38bdf8;
+      font-size: 14px;
+    }
+
+    .instructor-box strong {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    /* Visual Graphic Elements (Icon Boxes) */
+    .banner-graphic {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-shrink: 0;
+      max-width: 36%;
+    }
+
+    .icon-box {
+      width: 86px;
+      height: 86px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(16px);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+      transition: all 0.2s ease;
+      text-align: center;
+      padding: 6px;
+      overflow: hidden;
+    }
+
+    .icon-box.compact {
+      width: 76px;
+      height: 76px;
+      border-radius: 16px;
+    }
+
+    .icon-box.mini {
+      width: 68px;
+      height: 68px;
+      border-radius: 14px;
+    }
+
+    .icon-box .box-emoji {
+      font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Inter', sans-serif;
+      font-size: 32px;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-box.compact .box-emoji {
+      font-size: 26px;
+      margin-bottom: 3px;
+    }
+
+    .icon-box.mini .box-emoji {
+      font-size: 22px;
+      margin-bottom: 2px;
+    }
+
+    /* Custom PNG icon image inside box */
+    .box-custom-img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      margin-bottom: 4px;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
+    }
+
+    .icon-box.compact .box-custom-img {
+      width: 30px;
+      height: 30px;
+      margin-bottom: 3px;
+    }
+
+    .icon-box.mini .box-custom-img {
+      width: 25px;
+      height: 25px;
+      margin-bottom: 2px;
+    }
+
+    .icon-box .box-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      color: #f8fafc;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .icon-box.mini .box-label {
+      font-size: 9px;
+    }
+
+    .plus-sign {
+      font-size: 20px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.6);
+      user-select: none;
+    }
+
+    /* Editor Settings Panel */
+    .editor-card {
+      background: #1e293b;
+      border-radius: 18px;
+      padding: 26px;
+      border: 1px solid #334155;
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #38bdf8;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .field input, .field select {
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #ffffff;
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Background Themes and Custom Picker */
+    .theme-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .theme-btn {
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #e2e8f0;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      border-color: #38bdf8;
+      background: #1e293b;
+      color: #38bdf8;
+    }
+
+    .theme-preview-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .custom-bg-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .custom-bg-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .custom-bg-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .custom-bg-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .custom-bg-item label {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .custom-bg-item input[type="color"] {
+      width: 44px;
+      height: 32px;
+      padding: 2px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Icon Box Customizers */
+    .icon-boxes-config {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .icon-item-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .icon-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 8px;
+    }
+
+    .emoji-picker-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .emoji-input {
+      font-size: 20px;
+      text-align: center;
+      width: 58px !important;
+      padding: 5px !important;
+    }
+
+    .emoji-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .emoji-preset-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      padding: 3px 6px;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .emoji-preset-btn:hover {
+      background: #334155;
+      transform: scale(1.15);
+    }
+
+    /* File Upload Controls for PNG icons */
+    .upload-icon-wrapper {
+      background: #182234;
+      border: 1px dashed #475569;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .upload-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .custom-file-btn {
+      background: #334155;
+      color: #e2e8f0;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .custom-file-btn:hover {
+      background: #475569;
+      color: #ffffff;
+    }
+
+    .btn-remove-file {
+      background: #7f1d1d;
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s;
+    }
+
+    .btn-remove-file:hover {
+      background: #991b1b;
+      color: #ffffff;
+    }
+
+    .uploaded-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: #4ade80;
+    }
+
+    .uploaded-status img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 2px;
+    }
+
+    .color-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .color-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .color-field label {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .color-field input[type="color"] {
+      height: 36px;
+      width: 100%;
+      padding: 2px;
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .header-controls, .editor-card {
+        display: none !important;
+      }
+      .banner-preview-wrapper {
+        box-shadow: none;
+        border-radius: 0;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header Controls -->
+    <div class="header-controls">
+      <div class="header-title">
+        <h1><i class="fa-solid fa-graduation-cap" style="color: #107c41;"></i> Capa para Google Classroom</h1>
+        <p>Aperfeiçoamento Profissional - SENAI São Paulo</p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn" type="button" onclick="downloadBanner()">
+          <i class="fa-solid fa-download"></i> Baixar Capa em PNG
+        </button>
+        <button class="btn btn-outline" type="button" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> Imprimir / PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Banner Preview Canvas -->
+    <div class="banner-preview-wrapper" id="classroomBanner">
+      <div class="banner-canvas" id="canvasElement">
+        <div class="banner-grid"></div>
+        <div class="ai-glow-1"></div>
+        <div class="ai-glow-2"></div>
+
+        <div class="banner-content">
+          <div class="badge-group">
+            <span class="senai-tag">SENAI</span>
+            <span class="course-type" id="displayType">Aperfeiçoamento Profissional</span>
+          </div>
+
+          <h1 class="course-title" id="displayTitle">
+            Excel Básico <span>com IA Generativa</span>
+          </h1>
+
+          <div class="course-details">
+            <div><i class="fa-regular fa-clock" style="color:#22c55e;"></i> <span id="displayHours">Carga Horária: 20h</span></div>
+            <div><i class="fa-solid fa-laptop-code" style="color:#38bdf8;"></i> <span id="displayArea">TI - Software</span></div>
+            <div><i class="fa-solid fa-users" style="color:#a855f7;"></i> <span id="displayClass">Turma 2026</span></div>
+          </div>
+
+          <!-- Docente / Professor exposto logo abaixo da Carga Horária -->
+          <div class="instructor-box" id="displayInstructorBox">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            <span>Docente: <strong id="displayInstructor">Prof. Rafael Selvagio</strong></span>
+          </div>
+        </div>
+
+        <!-- Dynamic Icon Boxes Container -->
+        <div class="banner-graphic" id="bannerGraphic">
+          <!-- Rendered dynamically via JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Personalization Controls -->
+    <div class="editor-card">
+      <div class="section-title">
+        <i class="fa-solid fa-pen-to-square"></i> Dados do Curso e Docente
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="inputTitle">Título do Curso</label>
+          <input type="text" id="inputTitle" value="Excel Básico com IA Generativa" oninput="updateBanner()">
+        </div>
+        <div class="field">
+          <label for="inputType">Tipo de Curso</label>
+          <input type="text" id="inputType" value="Aperfeiçoamento Profissional" oninput="updateBanner()">
+        </div>
+        <div class="field">
+          <label for="inputHours">Carga Horária</label>
+          <input type="text" id="inputHours" value="Carga Horária: 20h" oninput="updateBanner()">
+        </div>
+        <div class="field">
+          <label for="inputInstructor">Nome do Professor / Docente</label>
+          <input type="text" id="inputInstructor" value="Prof. Rafael Selvagio" placeholder="Ex: Prof. Rafael Selvagio" oninput="updateBanner()">
+        </div>
+        <div class="field">
+          <label for="inputClass">Identificação da Turma / Período</label>
+          <input type="text" id="inputClass" value="Turma 2026" oninput="updateBanner()">
+        </div>
+        <div class="field">
+          <label for="inputArea">Área / Segmento</label>
+          <input type="text" id="inputArea" value="TI - Software" oninput="updateBanner()">
+        </div>
+      </div>
+
+      <!-- Background Theme Presets & Custom Color Selector -->
+      <div class="section-title">
+        <i class="fa-solid fa-palette"></i> Cor de Fundo da Capa
+      </div>
+      
+      <!-- Presets rápidos -->
+      <div class="theme-presets">
+        <button class="theme-btn active" type="button" onclick="setTheme('green')">
+          <span class="theme-preview-dot" style="background:#107c41;"></span> Verde Excel
+        </button>
+        <button class="theme-btn" type="button" onclick="setTheme('blue')">
+          <span class="theme-preview-dot" style="background:#0284c7;"></span> Azul Tecnologia
+        </button>
+        <button class="theme-btn" type="button" onclick="setTheme('purple')">
+          <span class="theme-preview-dot" style="background:#7c3aed;"></span> Roxo IA Generativa
+        </button>
+        <button class="theme-btn" type="button" onclick="setTheme('red')">
+          <span class="theme-preview-dot" style="background:#dc2626;"></span> Vermelho SENAI
+        </button>
+        <button class="theme-btn" type="button" onclick="setTheme('dark')">
+          <span class="theme-preview-dot" style="background:#334155;"></span> Grafite Minimalista
+        </button>
+      </div>
+
+      <!-- Seletor de cores personalizadas livre -->
+      <div class="custom-bg-card">
+        <div class="custom-bg-title">
+          <i class="fa-solid fa-eye-dropper" style="color: #38bdf8;"></i> Escolher Cor de Fundo Personalizada:
+        </div>
+        <div class="custom-bg-controls">
+          <div class="custom-bg-item">
+            <label for="bgCustom1">Cor Inicial:</label>
+            <input type="color" id="bgCustom1" value="#092014" oninput="applyCustomBg()">
+          </div>
+          <div class="custom-bg-item" id="bgCustom2Wrapper">
+            <label for="bgCustom2">Cor Final:</label>
+            <input type="color" id="bgCustom2" value="#107c41" oninput="applyCustomBg()">
+          </div>
+          <div class="custom-bg-item">
+            <label for="bgTypeSelect">Estilo:</label>
+            <select id="bgTypeSelect" onchange="toggleBgStyle()" style="padding: 6px 10px; font-size: 12px; background: #1e293b; color: #fff; border: 1px solid #475569; border-radius: 6px;">
+              <option value="gradient" selected>Gradiente Diagonal</option>
+              <option value="solid">Cor Sólida (Única)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Configuração de Ícones / Caixas -->
+      <div class="section-title">
+        <i class="fa-solid fa-icons"></i> Configurar Ícones / Caixas em Destaque (Icon Boxes)
+      </div>
+      <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 12px;">
+        <div class="field">
+          <label for="iconCountSelect">Quantidade de Caixas (icon-box)</label>
+          <select id="iconCountSelect" onchange="changeIconCount(this.value)">
+            <option value="0">0 (Nenhuma)</option>
+            <option value="1">1 Ícone</option>
+            <option value="2" selected>2 Ícones</option>
+            <option value="3">3 Ícones</option>
+            <option value="4">4 Ícones</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Individual Icon Customization Cards -->
+      <div class="icon-boxes-config" id="iconBoxesConfig">
+        <!-- Rendered by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    // State of icon boxes
+    let iconBoxesData = [
+      {
+        emoji: '📊',
+        imageSrc: '',
+        label: 'EXCEL',
+        bgColor: '#0f291e',
+        borderColor: '#22c55e',
+        textColor: '#22c55e'
+      },
+      {
+        emoji: '🤖',
+        imageSrc: '',
+        label: 'IA',
+        bgColor: '#0c2738',
+        borderColor: '#38bdf8',
+        textColor: '#38bdf8'
+      },
+      {
+        emoji: '⚡',
+        imageSrc: '',
+        label: 'PROMPTS',
+        bgColor: '#2a1a3e',
+        borderColor: '#c084fc',
+        textColor: '#c084fc'
+      },
+      {
+        emoji: '📈',
+        imageSrc: '',
+        label: 'DADOS',
+        bgColor: '#2c1e13',
+        borderColor: '#f59e0b',
+        textColor: '#f59e0b'
+      }
+    ];
+
+    let currentIconCount = 2;
+
+    const themeGradients = {
+      green: { c1: '#092014', c2: '#107c41', bg: 'linear-gradient(125deg, #092014 0%, #107c41 45%, #054020 70%, #03140a 100%)' },
+      blue: { c1: '#082f49', c2: '#0284c7', bg: 'linear-gradient(125deg, #082f49 0%, #0284c7 45%, #0369a1 70%, #041b2d 100%)' },
+      purple: { c1: '#2e1065', c2: '#7c3aed', bg: 'linear-gradient(125deg, #2e1065 0%, #7c3aed 45%, #581c87 70%, #17072c 100%)' },
+      red: { c1: '#450a0a', c2: '#b91c1c', bg: 'linear-gradient(125deg, #450a0a 0%, #b91c1c 45%, #991b1b 70%, #200505 100%)' },
+      dark: { c1: '#0f172a', c2: '#334155', bg: 'linear-gradient(125deg, #0f172a 0%, #334155 45%, #1e293b 70%, #020617 100%)' }
+    };
+
+    function setTheme(themeKey) {
+      const canvas = document.getElementById('canvasElement');
+      const t = themeGradients[themeKey];
+      if (t) {
+        canvas.style.background = t.bg;
+        const bg1 = document.getElementById('bgCustom1');
+        const bg2 = document.getElementById('bgCustom2');
+        const typeSelect = document.getElementById('bgTypeSelect');
+        const c2Wrapper = document.getElementById('bgCustom2Wrapper');
+
+        if (bg1) bg1.value = t.c1;
+        if (bg2) bg2.value = t.c2;
+        if (typeSelect) typeSelect.value = 'gradient';
+        if (c2Wrapper) c2Wrapper.style.display = 'flex';
+      }
+      document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.theme-btn')).find(b => b.getAttribute('onclick')?.includes(themeKey));
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function toggleBgStyle() {
+      const type = document.getElementById('bgTypeSelect').value;
+      const c2Wrapper = document.getElementById('bgCustom2Wrapper');
+      if (type === 'solid') {
+        c2Wrapper.style.display = 'none';
+      } else {
+        c2Wrapper.style.display = 'flex';
+      }
+      applyCustomBg();
+    }
+
+    function applyCustomBg() {
+      const c1 = document.getElementById('bgCustom1').value;
+      const c2 = document.getElementById('bgCustom2').value;
+      const type = document.getElementById('bgTypeSelect').value;
+      const canvas = document.getElementById('canvasElement');
+
+      if (type === 'solid') {
+        canvas.style.background = c1;
+      } else {
+        canvas.style.background = `linear-gradient(125deg, ${c1} 0%, ${c2} 70%, #020617 100%)`;
+      }
+      document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function updateBanner() {
+      const title = document.getElementById('inputTitle').value;
+      const type = document.getElementById('inputType').value;
+      const classInfo = document.getElementById('inputClass').value;
+      const hours = document.getElementById('inputHours').value;
+      const area = document.getElementById('inputArea').value;
+      const instructor = document.getElementById('inputInstructor').value.trim();
+
+      // Title formatting with gradient highlight for IA
+      if (title.toLowerCase().includes('ia') || title.toLowerCase().includes('inteligência artificial')) {
+        const parts = title.split(/com/i);
+        if (parts.length > 1) {
+          document.getElementById('displayTitle').innerHTML = parts[0] + ' <span>com ' + parts[1] + '</span>';
+        } else {
+          document.getElementById('displayTitle').textContent = title;
+        }
+      } else {
+        document.getElementById('displayTitle').textContent = title;
+      }
+
+      document.getElementById('displayType').textContent = type;
+      document.getElementById('displayClass').textContent = classInfo;
+      document.getElementById('displayHours').textContent = hours;
+      document.getElementById('displayArea').textContent = area;
+
+      // Instructor visibility & text
+      const instructorBox = document.getElementById('displayInstructorBox');
+      const instructorSpan = document.getElementById('displayInstructor');
+      if (instructor) {
+        instructorBox.style.display = 'inline-flex';
+        instructorSpan.textContent = instructor;
+      } else {
+        instructorBox.style.display = 'none';
+      }
+    }
+
+    function changeIconCount(count) {
+      currentIconCount = parseInt(count, 10);
+      renderIconEditors();
+      renderBannerIcons();
+    }
+
+    function setBoxEmoji(index, emoji) {
+      iconBoxesData[index].emoji = emoji;
+      iconBoxesData[index].imageSrc = ''; // clear image if emoji selected
+      const input = document.getElementById(`emoji_input_${index}`);
+      if (input) input.value = emoji;
+      renderBannerIcons();
+      renderIconEditors();
+    }
+
+    function handleImageUpload(index, event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          iconBoxesData[index].imageSrc = e.target.result;
+          renderBannerIcons();
+          renderIconEditors();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeBoxImage(index) {
+      iconBoxesData[index].imageSrc = '';
+      renderBannerIcons();
+      renderIconEditors();
+    }
+
+    function updateBoxData(index, field, value) {
+      iconBoxesData[index][field] = value;
+      renderBannerIcons();
+    }
+
+    function renderBannerIcons() {
+      const container = document.getElementById('bannerGraphic');
+      container.innerHTML = '';
+
+      if (currentIconCount === 0) {
+        return;
+      }
+
+      let sizeClass = '';
+      if (currentIconCount === 3) sizeClass = 'compact';
+      if (currentIconCount >= 4) sizeClass = 'mini';
+
+      for (let i = 0; i < currentIconCount; i++) {
+        const item = iconBoxesData[i];
+
+        // Box element
+        const box = document.createElement('div');
+        box.className = `icon-box ${sizeClass}`.trim();
+        box.style.backgroundColor = item.bgColor;
+        box.style.borderColor = item.borderColor;
+
+        // Either Custom Image PNG or Emoji
+        if (item.imageSrc) {
+          const imgEl = document.createElement('img');
+          imgEl.className = 'box-custom-img';
+          imgEl.src = item.imageSrc;
+          imgEl.alt = item.label || 'Ícone';
+          box.appendChild(imgEl);
+        } else {
+          const emojiDiv = document.createElement('div');
+          emojiDiv.className = 'box-emoji';
+          emojiDiv.textContent = item.emoji;
+          box.appendChild(emojiDiv);
+        }
+
+        // Label
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'box-label';
+        labelDiv.style.color = item.textColor || '#ffffff';
+        labelDiv.textContent = item.label;
+
+        box.appendChild(labelDiv);
+        container.appendChild(box);
+
+        // Add plus sign between boxes
+        if (i < currentIconCount - 1) {
+          const plus = document.createElement('div');
+          plus.className = 'plus-sign';
+          plus.textContent = '+';
+          container.appendChild(plus);
+        }
+      }
+    }
+
+    function renderIconEditors() {
+      const configContainer = document.getElementById('iconBoxesConfig');
+      configContainer.innerHTML = '';
+
+      const popularEmojis = ['📊', '🤖', '💻', '📈', '⚡', '🧠', '💡', '🐍', '🚀', '🎯'];
+
+      for (let i = 0; i < currentIconCount; i++) {
+        const item = iconBoxesData[i];
+
+        const card = document.createElement('div');
+        card.className = 'icon-item-card';
+
+        const header = document.createElement('div');
+        header.className = 'icon-item-header';
+        header.innerHTML = `<span>Ícone #${i + 1}</span> <span style="color:#38bdf8;">${item.label || ''}</span>`;
+        card.appendChild(header);
+
+        // Upload custom PNG icon
+        const uploadWrapper = document.createElement('div');
+        uploadWrapper.className = 'upload-icon-wrapper';
+        uploadWrapper.innerHTML = `
+          <div style="font-size: 11.5px; font-weight: 600; color: #cbd5e1; display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-file-image" style="color:#38bdf8;"></i> Ícone Personalizado (PNG do PC):
+          </div>
+          <div class="upload-action-row">
+            <label class="custom-file-btn">
+              <i class="fa-solid fa-upload"></i> Selecionar Arquivo PNG
+              <input type="file" accept="image/png, image/jpeg, image/svg+xml, image/webp" style="display:none;" onchange="handleImageUpload(${i}, event)">
+            </label>
+            ${item.imageSrc ? `
+              <button type="button" class="btn-remove-file" onclick="removeBoxImage(${i})" title="Remover imagem e voltar para o emoji">
+                <i class="fa-solid fa-trash-can"></i> Remover
+              </button>
+            ` : ''}
+          </div>
+          ${item.imageSrc ? `
+            <div class="uploaded-status">
+              <img src="${item.imageSrc}" alt="Preview">
+              <span>Imagem PNG ativa na caixa #${i + 1}</span>
+            </div>
+          ` : `
+            <div style="font-size: 11px; color: #64748b;">(Opcional. Se não carregar arquivo, usará o emoji abaixo)</div>
+          `}
+        `;
+        card.appendChild(uploadWrapper);
+
+        // Emoji input + quick presets (fallback / alternative)
+        const emojiField = document.createElement('div');
+        emojiField.className = 'field';
+        emojiField.style.opacity = item.imageSrc ? '0.65' : '1';
+        emojiField.innerHTML = `<label>Emoji do Ícone ${item.imageSrc ? '<span style="font-size:10px; color:#94a3b8;">(oculto pela imagem PNG)</span>' : ''}</label>`;
+
+        const emojiRow = document.createElement('div');
+        emojiRow.className = 'emoji-picker-row';
+
+        const emojiInput = document.createElement('input');
+        emojiInput.type = 'text';
+        emojiInput.id = `emoji_input_${i}`;
+        emojiInput.className = 'emoji-input';
+        emojiInput.value = item.emoji;
+        emojiInput.maxLength = 4;
+        emojiInput.oninput = (e) => {
+          item.imageSrc = '';
+          updateBoxData(i, 'emoji', e.target.value);
+          renderIconEditors();
+        };
+        emojiRow.appendChild(emojiInput);
+
+        const presetsWrapper = document.createElement('div');
+        presetsWrapper.className = 'emoji-presets';
+        popularEmojis.forEach(em => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'emoji-preset-btn';
+          btn.textContent = em;
+          btn.onclick = () => setBoxEmoji(i, em);
+          presetsWrapper.appendChild(btn);
+        });
+        emojiRow.appendChild(presetsWrapper);
+        emojiField.appendChild(emojiRow);
+        card.appendChild(emojiField);
+
+        // Label input
+        const labelField = document.createElement('div');
+        labelField.className = 'field';
+        labelField.innerHTML = `
+          <label>Legenda / Texto</label>
+          <input type="text" value="${item.label}" oninput="updateBoxData(${i}, 'label', this.value); updateHeaderLabel(${i}, this.value)">
+        `;
+        card.appendChild(labelField);
+
+        // Colors row (Fundo e Borda/Destaque)
+        const colorsRow = document.createElement('div');
+        colorsRow.className = 'color-row';
+
+        colorsRow.innerHTML = `
+          <div class="color-field">
+            <label>Cor de Fundo da Caixa</label>
+            <input type="color" value="${rgbOrHexToHex(item.bgColor)}" oninput="updateBoxData(${i}, 'bgColor', this.value)">
+          </div>
+          <div class="color-field">
+            <label>Cor da Borda e Texto</label>
+            <input type="color" value="${rgbOrHexToHex(item.borderColor)}" oninput="updateBoxData(${i}, 'borderColor', this.value); updateBoxData(${i}, 'textColor', this.value)">
+          </div>
+        `;
+        card.appendChild(colorsRow);
+
+        configContainer.appendChild(card);
+      }
+    }
+
+    function updateHeaderLabel(index, val) {
+      const cards = document.querySelectorAll('.icon-item-card');
+      if (cards[index]) {
+        const headerSpan = cards[index].querySelector('.icon-item-header span:last-child');
+        if (headerSpan) headerSpan.textContent = val;
+      }
+    }
+
+    function rgbOrHexToHex(color) {
+      if (!color) return '#107c41';
+      if (color.startsWith('#')) return color;
+      return '#0f291e';
+    }
+
+    async function downloadBanner() {
+      const banner = document.querySelector('.banner-canvas');
+      try {
+        await document.fonts.ready;
+        const canvas = await html2canvas(banner, {
+          scale: 3,
+          useCORS: true,
+          logging: false
+        });
+        const link = document.createElement('a');
+        link.download = 'capa-google-classroom.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (error) {
+        console.error('Erro ao gerar a imagem:', error);
+        alert('Não foi possível gerar a imagem da capa. Tente novamente.');
+      }
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderBannerIcons();
+      renderIconEditors();
+      updateBanner();
+    });
+  </script>
+</body>
+</html>
