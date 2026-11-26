@@ -110,6 +110,19 @@
     }
 
     /* Decorative Background Shapes & Grid */
+    .banner-bg-image {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.6;
+      display: none;
+      transition: opacity 0.2s ease;
+    }
+
     .banner-grid {
       position: absolute;
       inset: 0;
@@ -690,6 +703,7 @@
     <!-- Live Banner Preview Canvas -->
     <div class="banner-preview-wrapper" id="classroomBanner">
       <div class="banner-canvas" id="canvasElement">
+        <div class="banner-bg-image" id="bannerBgImage"></div>
         <div class="banner-grid"></div>
         <div class="ai-glow-1"></div>
         <div class="ai-glow-2"></div>
@@ -800,6 +814,31 @@
               <option value="gradient" selected>Gradiente Diagonal</option>
               <option value="solid">Cor Sólida (Única)</option>
             </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seletor de imagem de fundo personalizada -->
+      <div class="custom-bg-card" style="margin-top: -12px;">
+        <div class="custom-bg-title">
+          <i class="fa-solid fa-image" style="color: #38bdf8;"></i> Imagem de Fundo Personalizada:
+        </div>
+        <div class="custom-bg-controls" style="align-items: center;">
+          <label class="custom-file-btn">
+            <i class="fa-solid fa-upload"></i> Selecionar Imagem (PNG, JPG, WebP)
+            <input type="file" id="bgImageInput" accept="image/png, image/jpeg, image/jpg, image/webp" style="display:none;" onchange="handleBgImageUpload(event)">
+          </label>
+          <button type="button" id="btnRemoveBgImage" class="btn-remove-file" style="display: none;" onclick="removeBgImage()" title="Remover imagem de fundo">
+            <i class="fa-solid fa-trash-can"></i> Remover Imagem
+          </button>
+          <div class="custom-bg-item" id="bgOpacityWrapper" style="display: none;">
+            <label for="bgOpacityRange">Opacidade:</label>
+            <input type="range" id="bgOpacityRange" min="0.1" max="1" step="0.05" value="0.6" oninput="updateBgImageOpacity(this.value)" style="width: 85px; cursor: pointer; accent-color: #38bdf8;">
+            <span id="bgOpacityVal" style="font-size: 12px; color: #38bdf8; font-weight: 600; min-width: 35px;">60%</span>
+          </div>
+          <div id="bgImageStatus" style="display: none;" class="uploaded-status">
+            <img id="bgImageThumb" src="" alt="Preview">
+            <span>Imagem ativa no fundo</span>
           </div>
         </div>
       </div>
@@ -919,6 +958,61 @@
         canvas.style.background = `linear-gradient(125deg, ${c1} 0%, ${c2} 70%, #020617 100%)`;
       }
       document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    let bgImageOpacity = 0.6;
+
+    function handleBgImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const bgEl = document.getElementById('bannerBgImage');
+          const thumb = document.getElementById('bgImageThumb');
+          const status = document.getElementById('bgImageStatus');
+          const btnRemove = document.getElementById('btnRemoveBgImage');
+          const opacityWrapper = document.getElementById('bgOpacityWrapper');
+
+          if (bgEl) {
+            bgEl.style.backgroundImage = `url("${e.target.result}")`;
+            bgEl.style.display = 'block';
+            bgEl.style.opacity = bgImageOpacity;
+          }
+
+          if (thumb) thumb.src = e.target.result;
+          if (status) status.style.display = 'flex';
+          if (btnRemove) btnRemove.style.display = 'inline-flex';
+          if (opacityWrapper) opacityWrapper.style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeBgImage() {
+      const bgEl = document.getElementById('bannerBgImage');
+      const input = document.getElementById('bgImageInput');
+      const thumb = document.getElementById('bgImageThumb');
+      const status = document.getElementById('bgImageStatus');
+      const btnRemove = document.getElementById('btnRemoveBgImage');
+      const opacityWrapper = document.getElementById('bgOpacityWrapper');
+
+      if (bgEl) {
+        bgEl.style.backgroundImage = 'none';
+        bgEl.style.display = 'none';
+      }
+      if (input) input.value = '';
+      if (thumb) thumb.src = '';
+      if (status) status.style.display = 'none';
+      if (btnRemove) btnRemove.style.display = 'none';
+      if (opacityWrapper) opacityWrapper.style.display = 'none';
+    }
+
+    function updateBgImageOpacity(val) {
+      bgImageOpacity = parseFloat(val);
+      const bgEl = document.getElementById('bannerBgImage');
+      const label = document.getElementById('bgOpacityVal');
+      if (bgEl) bgEl.style.opacity = val;
+      if (label) label.textContent = Math.round(val * 100) + '%';
     }
 
     function updateBanner() {
