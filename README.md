@@ -24,6 +24,10 @@ Aplicação web interativa, leve e sem necessidade de instalação para geraçã
 - **Cores Personalizadas Livres**:
   - Seletor de cores nativo (*Color Picker*) para escolha livre.
   - Suporte a **Gradiente Diagonal** (com Cor Inicial e Cor Final) ou **Cor Sólida Única**.
+- **Imagem de Fundo Personalizada**:
+  - Botão para selecionar imagem direto do seu PC (PNG, JPG, WebP).
+  - Prévia em miniatura com indicador de status e botão para remoção rápida.
+  - Controle de **Opacidade da Imagem** via slider (10% a 100%), permitindo mesclar a imagem com os gradientes dos temas ou exibi-la de forma sólida.
 
 ### 🧩 3. Caixas em Destaque (`icon-box`)
 - **Quantidade Flexível**: escolha entre **0 (nenhuma), 1, 2, 3 ou 4 caixas**. O layout e os tamanhos dos cartões adaptam-se dinamicamente (`normal`, `compact` e `mini`).
@@ -42,7 +46,7 @@ Aplicação web interativa, leve e sem necessidade de instalação para geraçã
 
 ```text
 capa-classroom/
-├── capa_para_google_classroom_excel_ia.html   # Aplicação completa (HTML, CSS e JS)
+├── index.html                                  # Aplicação completa (HTML, CSS e JS)
 └── README.md                                  # Documentação do projeto
 ```
 
@@ -60,9 +64,9 @@ capa-classroom/
 
 ## 💻 Como Utilizar
 
-1. Dê um duplo clique no arquivo [`capa_para_google_classroom_excel_ia.html`](file:///Users/rafael.selvagio/Projetos/MyApps/SoftwaresIA/capa-classroom/capa_para_google_classroom_excel_ia.html) para abri-lo em qualquer navegador (Google Chrome, Microsoft Edge, Firefox, Safari ou Brave).
+1. Dê um duplo clique no arquivo [`index.html`](file:///Users/rafael.selvagio/Projetos/MyApps/SoftwaresIA/capa-classroom/index.html) para abri-lo em qualquer navegador (Google Chrome, Microsoft Edge, Firefox, Safari ou Brave).
 2. Utilize o painel **"Personalizar Dados da Capa"** para inserir as informações da sua turma.
-3. Escolha a cor de fundo e configure as caixas de destaque com emojis ou imagens PNG do seu computador.
+3. Escolha a cor de fundo, adicione uma imagem de fundo personalizada (opcional) e configure as caixas de destaque com emojis ou imagens PNG do seu computador.
 4. Clique no botão **"Baixar Capa em PNG"** no topo da página.
 5. No Google Classroom, abra a sua turma, clique em **"Personalizar" > "Fazer upload de foto"** e envie o arquivo PNG gerado.
 
